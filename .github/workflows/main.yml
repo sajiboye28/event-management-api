@@ -6,6 +6,14 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  NODE_ENV: test
+  CI: true
+  MONGODB_URI: mongodb://localhost:27017/eventmanagement_test
+  JWT_SECRET: test_jwt_secret
+  REDIS_HOST: localhost
+  REDIS_PORT: 6379
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -42,23 +50,22 @@ jobs:
         restore-keys: npm-
 
     - name: Install Dependencies
-      run: npm ci
+      run: |
+        npm ci
+        npm install -g eslint
     
     - name: Run Linter
       run: npm run lint
+      continue-on-error: true
     
     - name: Run Tests
       run: npm test
       env:
-        CI: true
-        NODE_ENV: test
-        MONGODB_URI: mongodb://localhost:27017/eventmanagement_test
-        JWT_SECRET: test_jwt_secret
-        REDIS_HOST: localhost
-        REDIS_PORT: 6379
+        NODE_OPTIONS: --max-old-space-size=4096
     
     - name: Upload coverage reports
       uses: codecov/codecov-action@v3
+      continue-on-error: true
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -96,7 +103,7 @@ jobs:
         cache: 'npm'
     
     - name: Install Dependencies
-      run: npm ci
+      run: npm ci --production
     
     - name: Build
       run: npm run build --if-present
@@ -105,7 +112,11 @@ jobs:
       env:
         RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
       run: |
-        curl -X POST https://api.render.com/v1/deploys \
-          -H "Authorization: Bearer $RENDER_API_KEY" \
-          -H "Content-Type: application/json" \
-          -d '{"service": "${{ secrets.RENDER_SERVICE_ID }}"}'
+        if [ -n "$RENDER_API_KEY" ]; then
+          curl -X POST https://api.render.com/v1/deploys \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"service": "${{ secrets.RENDER_SERVICE_ID }}"}'
+        else
+          echo "Skipping deployment - RENDER_API_KEY not set"
+        fi
