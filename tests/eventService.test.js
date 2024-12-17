@@ -39,8 +39,12 @@ describe('Event Service', () => {
       const eventData = {
         title: 'Test Event',
         description: 'Test Description',
-        date: new Date(),
-        location: 'Test Location',
+        date: new Date(Date.now() + 86400000), // Tomorrow
+        location: {
+          type: 'Point',
+          coordinates: [-122.4194, 37.7749],
+          address: 'Test Location'
+        },
         organizer: testUser._id
       };
 
@@ -52,8 +56,8 @@ describe('Event Service', () => {
 
     it('should throw validation error for invalid event data', async () => {
       const invalidEventData = {
-        // Missing required fields
         description: 'Test Description'
+        // Missing required fields
       };
 
       await expect(EventService.createEvent(invalidEventData)).rejects.toThrow();
@@ -66,15 +70,23 @@ describe('Event Service', () => {
         {
           title: 'Event 1',
           description: 'Description 1',
-          date: new Date(),
-          location: 'Location 1',
+          date: new Date(Date.now() + 86400000),
+          location: {
+            type: 'Point',
+            coordinates: [-122.4194, 37.7749],
+            address: 'Location 1'
+          },
           organizer: testUser._id
         },
         {
           title: 'Event 2',
           description: 'Description 2',
-          date: new Date(),
-          location: 'Location 2',
+          date: new Date(Date.now() + 172800000),
+          location: {
+            type: 'Point',
+            coordinates: [-122.4194, 37.7749],
+            address: 'Location 2'
+          },
           organizer: testUser._id
         }
       ]);
@@ -100,8 +112,12 @@ describe('Event Service', () => {
       event = await Event.create({
         title: 'Original Event',
         description: 'Original Description',
-        date: new Date(),
-        location: 'Original Location',
+        date: new Date(Date.now() + 86400000),
+        location: {
+          type: 'Point',
+          coordinates: [-122.4194, 37.7749],
+          address: 'Original Location'
+        },
         organizer: testUser._id
       });
     });
@@ -138,8 +154,12 @@ describe('Event Service', () => {
       event = await Event.create({
         title: 'Test Event',
         description: 'Test Description',
-        date: new Date(),
-        location: 'Test Location',
+        date: new Date(Date.now() + 86400000),
+        location: {
+          type: 'Point',
+          coordinates: [-122.4194, 37.7749],
+          address: 'Test Location'
+        },
         organizer: testUser._id,
         maxParticipants: 10
       });
@@ -171,8 +191,12 @@ describe('Event Service', () => {
       event = await Event.create({
         title: 'Test Event',
         description: 'Test Description',
-        date: new Date(),
-        location: 'Test Location',
+        date: new Date(Date.now() + 86400000),
+        location: {
+          type: 'Point',
+          coordinates: [-122.4194, 37.7749],
+          address: 'Test Location'
+        },
         organizer: testUser._id
       });
     });

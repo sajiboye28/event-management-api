@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { expect } = require('chai');
+const expect = require('expect');
 const sinon = require('sinon');
 
 const EventSecurityService = require('../src/services/eventSecurityService');
@@ -11,7 +11,7 @@ const Event = require('../src/models/Event');
 describe('Security Services Test Suite', function() {
   let testUser, testEvent;
 
-  before(async function() {
+  beforeAll(async function() {
     // Connect to test database
     await mongoose.connect(process.env.MONGO_TEST_URI, {
       useNewUrlParser: true,
@@ -36,7 +36,7 @@ describe('Security Services Test Suite', function() {
     await testEvent.save();
   });
 
-  after(async function() {
+  afterAll(async function() {
     // Cleanup test data
     await User.deleteMany({});
     await Event.deleteMany({});
@@ -50,8 +50,8 @@ describe('Security Services Test Suite', function() {
         testUser._id
       );
       
-      expect(token).to.have.property('accessToken');
-      expect(token).to.have.property('expiresAt');
+      expect(token).toHaveProperty('accessToken');
+      expect(token).toHaveProperty('expiresAt');
     });
 
     it('should validate event access token', function() {
@@ -66,7 +66,7 @@ describe('Security Services Test Suite', function() {
         testUser._id
       );
       
-      expect(isValid).to.be.true;
+      expect(isValid).toBe(true);
     });
 
     it('should assess registration risk', async function() {
@@ -75,9 +75,9 @@ describe('Security Services Test Suite', function() {
         testEvent._id
       );
       
-      expect(riskAssessment).to.have.property('riskLevel');
-      expect(riskAssessment).to.have.property('riskScore');
-      expect(riskAssessment).to.have.property('requiresAdditionalVerification');
+      expect(riskAssessment).toHaveProperty('riskLevel');
+      expect(riskAssessment).toHaveProperty('riskScore');
+      expect(riskAssessment).toHaveProperty('requiresAdditionalVerification');
     });
   });
 
@@ -87,9 +87,9 @@ describe('Security Services Test Suite', function() {
         testUser._id
       );
       
-      expect(suspiciousActivity).to.have.property('userId');
-      expect(suspiciousActivity).to.have.property('riskScore');
-      expect(suspiciousActivity).to.have.property('riskLevel');
+      expect(suspiciousActivity).toHaveProperty('userId');
+      expect(suspiciousActivity).toHaveProperty('riskScore');
+      expect(suspiciousActivity).toHaveProperty('riskLevel');
     });
 
     it('should run comprehensive fraud check', async function() {
@@ -97,10 +97,10 @@ describe('Security Services Test Suite', function() {
         testUser._id
       );
       
-      expect(fraudCheck).to.have.property('userId');
-      expect(fraudCheck).to.have.property('userActivityRisk');
-      expect(fraudCheck).to.have.property('ipFraudRisk');
-      expect(fraudCheck).to.have.property('anomalyRisk');
+      expect(fraudCheck).toHaveProperty('userId');
+      expect(fraudCheck).toHaveProperty('userActivityRisk');
+      expect(fraudCheck).toHaveProperty('ipFraudRisk');
+      expect(fraudCheck).toHaveProperty('anomalyRisk');
     });
   });
 
@@ -108,20 +108,20 @@ describe('Security Services Test Suite', function() {
     it('should collect system health metrics', async function() {
       const systemHealth = await SystemMonitoringService.getSystemHealth();
       
-      expect(systemHealth).to.have.property('cpu');
-      expect(systemHealth).to.have.property('memory');
-      expect(systemHealth).to.have.property('heap');
-      expect(systemHealth).to.have.property('database');
-      expect(systemHealth).to.have.property('disk');
+      expect(systemHealth).toHaveProperty('cpu');
+      expect(systemHealth).toHaveProperty('memory');
+      expect(systemHealth).toHaveProperty('heap');
+      expect(systemHealth).toHaveProperty('database');
+      expect(systemHealth).toHaveProperty('disk');
     });
 
     it('should generate system report', async function() {
       const systemReport = await SystemMonitoringService.generateSystemReport();
       
-      expect(systemReport).to.have.property('systemHealth');
-      expect(systemReport).to.have.property('securityReport');
-      expect(systemReport).to.have.property('performanceLogs');
-      expect(systemReport).to.have.property('generatedAt');
+      expect(systemReport).toHaveProperty('systemHealth');
+      expect(systemReport).toHaveProperty('securityReport');
+      expect(systemReport).toHaveProperty('performanceLogs');
+      expect(systemReport).toHaveProperty('generatedAt');
     });
   });
 });

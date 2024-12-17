@@ -1,33 +1,59 @@
 # Event Management API 
 
 ## Overview
-A comprehensive, secure backend platform for event management with advanced authentication, monitoring, and threat intelligence capabilities.
+A comprehensive, secure backend platform for event management with advanced authentication, monitoring, and threat intelligence capabilities. Built with Node.js and Express.js, this API provides enterprise-grade security and scalability for managing events at any scale.
 
 ## Features
-- Multi-factor Authentication
-- OAuth Integration
-- Role-Based Access Control
-- Advanced Threat Detection
-- Real-time System Monitoring
-- Comprehensive Logging
-- Event Recommendation Engine
+- **Authentication & Authorization**
+  - Multi-factor Authentication (SMS/Email)
+  - OAuth2.0 Integration (Google, GitHub)
+  - Role-Based Access Control (RBAC)
+  - JWT with refresh token rotation
+  
+- **Security**
+  - Advanced Rate Limiting
+  - Request Validation
+  - XSS Protection
+  - SQL Injection Prevention
+  - CORS Configuration
+  - Security Headers (Helmet)
+  
+- **Monitoring & Logging**
+  - Real-time System Monitoring
+  - Structured Logging (Winston)
+  - Performance Metrics
+  - Error Tracking
+  - Audit Trails
+  
+- **Event Management**
+  - Event Creation/Update/Deletion
+  - Ticket Management
+  - Attendee Management
+  - Event Categories
+  - Search & Filtering
+  - Recommendation Engine
 
 ## Tech Stack
-- Backend: Node.js, Express.js
-- Database: MongoDB
-- Authentication: Passport.js, JWT
-- Real-time: Socket.IO
-- Security: Helmet, Rate Limiting
-- Monitoring: Custom Threat Intelligence Service
+- **Backend Framework**: Node.js, Express.js
+- **Database**: MongoDB with Mongoose ODM
+- **Cache**: Redis
+- **Authentication**: JWT, Passport.js
+- **Real-time**: Socket.IO
+- **Documentation**: Swagger/OpenAPI
+- **Testing**: Jest, Supertest
+- **CI/CD**: GitHub Actions
+- **Deployment**: Docker, Render
 
 ## Prerequisites
 - Node.js 18+
 - MongoDB 5.0+
+- Redis 6+
 - npm 8+
+- Docker (optional)
 
 ## Quick Start
 
-### Installation
+### Local Development
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/event-management-api.git
@@ -41,56 +67,73 @@ npm install
 # Copy environment configuration
 cp .env.example .env
 
-# Edit .env with your configurations
-```
+# Start MongoDB and Redis (if using Docker)
+docker-compose up -d mongodb redis
 
-### Running the Application
-```bash
-# Development Mode
+# Run in development mode
 npm run dev
-
-# Production Mode
-npm start
 ```
 
-### Testing
+### Docker Deployment
 ```bash
-# Run tests
+# Build the Docker image
+docker build -t event-api .
+
+# Run the container
+docker run -p 3000:3000 --env-file .env event-api
+```
+
+## Environment Variables
+```
+NODE_ENV=development
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017/eventmanagement
+REDIS_HOST=localhost
+REDIS_PORT=6379
+JWT_SECRET=your-jwt-secret
+JWT_EXPIRES_IN=1d
+REFRESH_TOKEN_EXPIRES_IN=7d
+```
+
+## API Documentation
+- Development: http://localhost:3000/api-docs
+- Production: https://your-api.render.com/api-docs
+
+## Testing
+```bash
+# Run all tests
 npm test
 
-# Generate coverage report
-npm run coverage
+# Run specific test suite
+npm test -- events
+
+# Run with coverage
+npm run test:coverage
 ```
 
 ## Security Features
-- Two-Factor Authentication
-- OAuth Provider Integration
-- IP-based Fraud Detection
-- Advanced Risk Scoring
-- Comprehensive Input Sanitization
+- Rate limiting per endpoint
+- Request validation
+- XSS protection
+- SQL injection prevention
+- CORS configuration
+- Security headers
+- Input sanitization
+- Password hashing
+- JWT token rotation
 
 ## Monitoring
-- Real-time System Health Checks
-- Performance Metrics
-- Threat Intelligence Monitoring
-- Automated Alert System
-
-## Environment Configuration
-Customize your environment in `.env`:
-- Database Connection
-- Authentication Secrets
-- Threat Intelligence API Keys
-- Logging Configurations
+- Health check endpoint: `/health`
+- Metrics endpoint: `/metrics`
+- Structured logging
+- Performance monitoring
+- Error tracking
 
 ## Contributing
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
 ## License
-UNLICENSED - Private Project
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Security
-Please report security vulnerabilities privately.
+## Support
+For support, please open an issue in the GitHub repository or contact the maintainers.

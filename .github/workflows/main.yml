@@ -34,6 +34,13 @@ jobs:
         node-version: '18.x'
         cache: 'npm'
     
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: npm-${{ hashFiles('package-lock.json') }}
+        restore-keys: npm-
+
     - name: Install Dependencies
       run: npm ci
     
@@ -70,9 +77,8 @@ jobs:
     - name: Install Dependencies
       run: npm ci
     
-    - name: Run Security Scan
-      run: |
-        npm audit --production
+    - name: Run NPM Audit
+      run: npm audit --production
       continue-on-error: true
 
   deploy:
@@ -95,9 +101,11 @@ jobs:
     - name: Build
       run: npm run build --if-present
       
-    - name: Deploy
+    - name: Deploy to Render
       env:
         RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
       run: |
-        echo "Deployment would happen here"
-      # Add actual deployment steps when ready
+        curl -X POST https://api.render.com/v1/deploys \
+          -H "Authorization: Bearer $RENDER_API_KEY" \
+          -H "Content-Type: application/json" \
+          -d '{"service": "${{ secrets.RENDER_SERVICE_ID }}"}'

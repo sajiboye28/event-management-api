@@ -1,8 +1,10 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const config = require('../config/config');
+const bcrypt = require('bcryptjs');
 
-// Enhanced user registration
+// @desc    Register user
+// @route   POST /api/auth/register
+// @access  Public
 exports.register = async (req, res) => {
   try {
     const { 
@@ -51,7 +53,7 @@ exports.register = async (req, res) => {
         username: newUser.username,
         role: newUser.role 
       }, 
-      config.JWT_SECRET, 
+      process.env.JWT_SECRET || 'test_jwt_secret', 
       { expiresIn: '30d' }
     );
 
@@ -69,7 +71,9 @@ exports.register = async (req, res) => {
   }
 };
 
-// Enhanced login with role tracking
+// @desc    Login user
+// @route   POST /api/auth/login
+// @access  Public
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -88,7 +92,7 @@ exports.login = async (req, res) => {
     }
 
     // Check password
-    const isMatch = await user.isValidPassword(password);
+    const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(401).json({ 
@@ -119,7 +123,7 @@ exports.login = async (req, res) => {
         username: user.username,
         role: user.role 
       }, 
-      config.JWT_SECRET, 
+      process.env.JWT_SECRET || 'test_jwt_secret', 
       { expiresIn: '30d' }
     );
 
@@ -135,5 +139,17 @@ exports.login = async (req, res) => {
       message: 'Login failed', 
       error: error.message 
     });
+  }
+};
+
+// @desc    Get current user
+// @route   GET /api/auth/me
+// @access  Private
+exports.getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
   }
 };
